@@ -1,4 +1,4 @@
-const socket = io("ws://localhost:3000", {
+const socket = io("ws://", {
   autoConnect: false,
 });
 
@@ -31,7 +31,7 @@ document.querySelector("#connectBtn").addEventListener("click", () => {
   socket.connect();
 });
 document.querySelector("#disConnectBtn").addEventListener("click", () => {
-  clearMsg('Please click "CONNECT" to pay');
+  clearMsg('Please click "CONNECT" to play');
   socket.disconnect();
 });
 
