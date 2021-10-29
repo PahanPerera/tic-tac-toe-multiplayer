@@ -1,4 +1,4 @@
-const socket = io("ws://", {
+const socket = io("wss://", {
   autoConnect: false,
 });
 
