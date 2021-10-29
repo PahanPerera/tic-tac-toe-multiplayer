@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TIC TAC TOE</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <p id="msg"></p>
+    <div id="grid">
+      <div class="row">
+        <span id="0-0"></span>
+        <span id="0-1"></span>
+        <span id="0-2"></span>
+      </div>
+      <div class="row">
+        <span id="1-0"></span>
+        <span id="1-1"></span>
+        <span id="1-2"></span>
+      </div>
+      <div class="row">
+        <span id="2-0"></span>
+        <span id="2-1"></span>
+        <span id="2-2"></span>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button id="connectBtn">CONNECT</button>
+      <button id="disConnectBtn">DISCONNECT</button>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-3.0.0.js"></script>
+    <script defer src="./app.js"></script>
+  </body>
+</html>
