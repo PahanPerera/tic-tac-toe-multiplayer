@@ -1,7 +1,7 @@
 {
-  "name": "tic-tac-toe-game",
+  "name": "@pahanperera/tic-tac-toe-multiplayer",
   "version": "1.0.0",
-  "description": "tic tac toe game with websockets",
+  "description": "tic tac toe game with web sockets",
   "main": "index.js",
   "license": "MIT",
   "type": "module",
