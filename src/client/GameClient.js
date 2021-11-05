@@ -36,6 +36,4 @@ export class GameClient {
   updateGrid = ({ gameState }) => {
     this.updateGridView(gameState);
   };
-
-  update;
 }

@@ -1,4 +1,4 @@
-import { GameClient } from "./game.js";
+import { GameClient } from "./GameClient.js";
 
 const updateView = ({ symbol, msg }) => {
   let text = "";
