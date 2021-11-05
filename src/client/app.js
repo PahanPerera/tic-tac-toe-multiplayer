@@ -1,51 +1,44 @@
-const socket = io("ws://", {
-  autoConnect: false,
-});
+import { GameClient } from "./game.js";
 
-let SYMBOL = "";
-let GAME_STATE = 0;
-let IS_LOCKED = true;
+const updateView = ({ symbol, msg }) => {
+  let text = "";
+  if (symbol) text = `You symbol is (${symbol}) <br/> ${msg}`;
+  if (!symbol) text = `${msg}`;
+  document.querySelector("#msg").innerHTML = text;
+};
 
-socket.on("init", (initMsg) => {
-  console.log(initMsg);
-  SYMBOL = initMsg.symbol;
-  updateMsg(`Waiting for other`);
-});
-
-socket.on("gameState", (gameState) => {
-  console.log(gameState);
-  if (GAME_STATE === 0) {
-    GAME_STATE = 1;
+const notifyView = (action, payload) => {
+  if (action === "NOT_CONNECTED") {
+    updateView({ msg: `Please click "CONNECT" to play` });
   }
-  if (gameState.nextSymbol === SYMBOL) {
-    updateMsg("Your turn..");
-    IS_LOCKED = false;
-  } else {
-    updateMsg("Others' turn.. Wait");
-    IS_LOCKED = true;
+  if (action === "CONNECTED") {
+    updateView({ symbol: payload.symbol, msg: `Waiting for Others..` });
   }
-  renderGrid(gameState.game);
-});
-
-document.querySelector("#connectBtn").addEventListener("click", () => {
-  socket.connect();
-});
-document.querySelector("#disConnectBtn").addEventListener("click", () => {
-  clearMsg('Please click "CONNECT" to play');
-  socket.disconnect();
-});
-
-document.querySelector("#grid").addEventListener("click", (e) => {
-  if (IS_LOCKED) return;
-  if (e.target.id) {
-    socket.emit("action", {
-      symbol: SYMBOL,
-      location: String(e.target.id).split("-"),
-    });
+  if (action === "MY_TURN") {
+    updateView({ symbol: payload.symbol, msg: `Your  Turn...` });
   }
-});
+  if (action === "THEIR_TURN") {
+    updateView({ symbol: payload.symbol, msg: `Others' turn.. Wait` });
+  }
+  if (action === "DISCONNECTED") {
+    updateView({ msg: `Please click "CONNECT" to play` });
+  }
+};
 
-const renderGrid = (gameState) => {
+const notifyServer = ({ x, y, symbol }) => {
+  socket.emit("action", {
+    symbol,
+    location: [x, y],
+  });
+};
+
+const updateGridView = (
+  gameState = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ]
+) => {
   for (let x = 0; x < gameState.length; x++) {
     for (let y = 0; y < gameState.length; y++) {
       document.getElementById(`${x}-${y}`).innerHTML =
@@ -54,14 +47,31 @@ const renderGrid = (gameState) => {
   }
 };
 
-const updateMsg = (msg) => {
-  document.querySelector(
-    "#msg"
-  ).innerHTML = `You symbol is (${SYMBOL}) <br/> ${msg}`;
-};
+const gameClient = new GameClient({ notifyView, notifyServer, updateGridView });
 
-const clearMsg = (msg) => {
-  document.querySelector("#msg").innerHTML = `${msg}`;
-};
+const socket = io("ws://", {
+  autoConnect: false,
+});
 
-clearMsg('Please click "CONNECT" to play');
+socket.on("init", ({ symbol }) => {
+  gameClient.initGame({ symbol });
+});
+
+socket.on("gameState", ({ game, nextSymbol }) => {
+  gameClient.updateGrid({ gameState: game });
+  gameClient.handlePlayerActionChange({ nextSymbol });
+});
+
+document.querySelector("#connectBtn").addEventListener("click", () => {
+  socket.connect();
+});
+
+document.querySelector("#disConnectBtn").addEventListener("click", () => {
+  gameClient.handleDisconnection();
+  socket.disconnect();
+});
+
+document.querySelector("#grid").addEventListener("click", (e) => {
+  const [x, y] = String(e.target.id).split("-");
+  gameClient.handlePlayerAction({ x, y });
+});
