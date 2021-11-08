@@ -49,7 +49,7 @@ const updateGridView = (
 
 const gameClient = new GameClient({ notifyView, notifyServer, updateGridView });
 
-const socket = io("ws://", {
+const socket = io("wss://", {
   autoConnect: false,
 });
 
